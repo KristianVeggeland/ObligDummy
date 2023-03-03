@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import GameObjects.Dot;
+import GameObjects.Tablet;
+import GameObjects.Wall;
 import com.example.pacmanoblig.Ghosts.Blinky;
 import com.example.pacmanoblig.Ghosts.Clyde;
 import com.example.pacmanoblig.Ghosts.Inky;
@@ -59,18 +62,15 @@ public class GameMap {
             for (int col = 0; col < numCols; col++) {
                 int ch = cells[row][col];
                 if (ch == '#') {
-                    Rectangle wall = new Rectangle(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                    wall.setFill(Color.DARKBLUE);
+                    Wall wall = new Wall(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                     root.getChildren().add(wall);
                 }
                 if (ch == '-') {
-                    Circle dot = new Circle(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2, 3);
-                    dot.setFill(Color.WHITE);
+                    Dot dot = new Dot(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2);
                     root.getChildren().add(dot);
                 }
                 if (ch == '=') {
-                    Circle energy = new Circle(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2, 6);
-                    energy.setFill(Color.WHITE);
+                    Tablet energy = new Tablet(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2);
                     root.getChildren().add(energy);
                 }
                 if (ch == '0'){
@@ -102,4 +102,6 @@ public class GameMap {
     public Player getPlayer(){
         return player;
     }
+
+
 }
