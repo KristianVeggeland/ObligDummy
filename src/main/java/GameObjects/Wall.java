@@ -4,14 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Wall extends Rectangle {
-    double startX;
-    double startY;
-
-    double endX;
-
-    double endY;
-
-    final Color c = Color.DARKBLUE;
+    static final Color c = Color.DARKBLUE;
 
     public Wall(double startX, double startY, double endX, double endY) {
         super(startX, startY, endX, endY);
