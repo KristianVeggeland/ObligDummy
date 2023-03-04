@@ -21,6 +21,11 @@ public class Player extends Circle {
 
     double speed = 1;
     int score = 0;
+
+
+
+    double nextX = getLayoutX() + speed;
+    double nextY = getLayoutY() + speed;
     boolean moveLeft, moveRight, moveUp, moveDown;
 
     public Player(double x, double y) {
@@ -33,7 +38,8 @@ public class Player extends Circle {
     }
 
     public void update(){
-
+        if (!checkCollision()) {
+        }
 
         if (moveUp) {
             setLayoutY(getLayoutY() - speed);
@@ -49,8 +55,7 @@ public class Player extends Circle {
         if (moveLeft) {
             setLayoutX(getLayoutX() - speed);
         }
-        if (!checkCollision()) {
-        }
+
 
     }
 
@@ -74,21 +79,25 @@ public class Player extends Circle {
     public void upM() {
         moveDown = moveLeft = moveRight = false;
         moveUp = true;
+
     }
 
     public void downM() {
         moveRight = moveUp = moveLeft = false;
         moveDown = true;
+
     }
 
     public void rightM() {
         moveDown = moveUp = moveLeft = false;
         moveRight = true;
+
     }
 
     public void leftM() {
         moveDown = moveUp = moveRight = false;
         moveLeft = true;
+
     }
     
 
@@ -111,26 +120,35 @@ public class Player extends Circle {
 
             if (n instanceof Wall) {
 
-                double nextX = getLayoutX() + speed + 1;
-                double nextY = getLayoutY() + speed + 1;
-
                 Wall nWall = (Wall)n;
 
-                if (n.getBoundsInParent().intersects(nextX, nextY, getRadius(), getRadius())) {
+                if (nWall.getBoundsInParent().intersects(getLayoutX() + getRadius(), getLayoutY() + getRadius(), getRadius(), getRadius())) {
+                    System.out.println("3");
+
                     if (getLayoutX() > nWall.getX() && getLayoutX() < nWall.getX() + nWall.getWidth() ) {
+                        System.out.println("1");
                         if (nextY < getLayoutY()) {
-                            setLayoutY(nWall.getY() + nWall.getHeight() + getRadius());
+                            moveUp = false;
+                            moveDown = false;
                         } else {
-                            setLayoutY(nWall.getY() - getRadius());
+                            moveUp = true;
+                            moveDown = true;
+                            System.out.println("test2");
                         }
                     } else if (getLayoutY() > nWall.getY() && getLayoutY() < nWall.getY() + nWall.getHeight()) {
+                        System.out.println("2");
                         if (nextX < getLayoutX()) {
-                            setLayoutX(nWall.getX() + nWall.getWidth() + getRadius());
+
+                            System.out.println("test3");
                         } else {
-                            setLayoutX(nWall.getX() - getRadius());
+
+                            System.out.println("test4");
                         }
                     }
+
                 }
+
+
             }
 
             if (intersects.getBoundsInLocal().getWidth() != -1) {
