@@ -15,9 +15,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        map = new GameMap("src/pacman-map.txt");
+        map = GameMap.getMap();
+
         Scene scene = new Scene(map.createMap(), Color.BLACK);
         scene.setOnKeyPressed(this::actionEvents);
+
         primaryStage.setTitle("Pac-Man");
         primaryStage.setScene(scene);
         primaryStage.show();

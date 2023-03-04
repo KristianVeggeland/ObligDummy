@@ -27,8 +27,20 @@ public class GameMap {
 
     private Player player;
 
-    public GameMap(String filename) throws FileNotFoundException {
-        File file = new File(filename);
+    private static GameMap map;
+
+    static {
+        try {
+            map = new GameMap();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public GameMap() throws FileNotFoundException {
+        map = this;
+
+        File file = new File("src/pacman-map.txt");
         Scanner scanner = new Scanner(file);
         numRows = 0;
         while (scanner.hasNextLine()) {
@@ -99,8 +111,16 @@ public class GameMap {
         return root;
     }
 
+    public int[][] getCells(){
+        return cells;
+    }
+
     public Player getPlayer(){
         return player;
+    }
+
+    public static GameMap getMap(){
+        return map;
     }
 
 

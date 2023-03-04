@@ -4,20 +4,23 @@ package com.example.pacmanoblig;
 import GameObjects.Dot;
 import GameObjects.Tablet;
 import GameObjects.Wall;
+import com.example.pacmanoblig.Ghosts.Ghost;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends Circle {
     double x, y;
 
     double speed = 0.6;
-
+    int score = 0;
     boolean moveLeft, moveRight, moveUp, moveDown;
 
     public Player(double x, double y) {
@@ -30,6 +33,7 @@ public class Player extends Circle {
     }
 
     public void update(){
+
 
         if (moveUp) {
             setLayoutY(getLayoutY() - speed);
@@ -53,7 +57,6 @@ public class Player extends Circle {
     public void keyPressed(KeyEvent e) {
         if (e.getText().equals("w")){
             upM();
-
         }
         if (e.getText().equals("s")){
             downM();
@@ -107,17 +110,25 @@ public class Player extends Circle {
 
             if (intersects.getBoundsInLocal().getWidth() != -1) {
                 if (n instanceof Dot) {
-                    System.out.println("o");
+
+                    score = score+10;
+                    System.out.println(score);
+
                     g.getChildren().remove(n);
                 }
 
                 if (n instanceof Tablet) {
-                    System.out.println("*");
+
+                    List<Ghost> ghosts = Ghost.getAllInstances();
+                    for (Ghost ghost : ghosts) {
+                        ghost.blueMode();
+                    }
+
                     g.getChildren().remove(n);
                 }
 
                 if (n instanceof Wall) {
-                    System.out.println();
+
                     if (moveUp) {
                        moveUp = false;
                        setLayoutY(getLayoutY() + speed);
@@ -136,6 +147,7 @@ public class Player extends Circle {
                     if (moveLeft) {
                         moveLeft = false;
                         setLayoutX(getLayoutX() + speed);
+
                     }
                 }
 
