@@ -19,7 +19,7 @@ import java.util.List;
 public class Player extends Circle {
     double x, y;
 
-    double speed = 0.6;
+    double speed = 1;
     int score = 0;
     boolean moveLeft, moveRight, moveUp, moveDown;
 
@@ -68,6 +68,7 @@ public class Player extends Circle {
         if (e.getText().equals("a")){
             leftM();
         }
+
     }
 
     public void upM() {
@@ -107,6 +108,30 @@ public class Player extends Circle {
 
         for (Shape n: listOfObjects) {
             Shape intersects = Shape.intersect(this, n);
+
+            if (n instanceof Wall) {
+
+                double nextX = getLayoutX() + speed + 1;
+                double nextY = getLayoutY() + speed + 1;
+
+                Wall nWall = (Wall)n;
+
+                if (n.getBoundsInParent().intersects(nextX, nextY, getRadius(), getRadius())) {
+                    if (getLayoutX() > nWall.getX() && getLayoutX() < nWall.getX() + nWall.getWidth() ) {
+                        if (nextY < getLayoutY()) {
+                            setLayoutY(nWall.getY() + nWall.getHeight() + getRadius());
+                        } else {
+                            setLayoutY(nWall.getY() - getRadius());
+                        }
+                    } else if (getLayoutY() > nWall.getY() && getLayoutY() < nWall.getY() + nWall.getHeight()) {
+                        if (nextX < getLayoutX()) {
+                            setLayoutX(nWall.getX() + nWall.getWidth() + getRadius());
+                        } else {
+                            setLayoutX(nWall.getX() - getRadius());
+                        }
+                    }
+                }
+            }
 
             if (intersects.getBoundsInLocal().getWidth() != -1) {
                 if (n instanceof Dot) {
@@ -156,6 +181,8 @@ public class Player extends Circle {
         }
         return true;
     }
+
+
 
 
 
