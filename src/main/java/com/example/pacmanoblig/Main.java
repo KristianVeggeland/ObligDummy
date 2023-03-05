@@ -50,7 +50,7 @@ public class Main extends Application {
     }
 
     public void actionEvents(KeyEvent e) {
-        map.getPlayer().keyPressed(e);
+        map.getPlayer().handleKeyEvent(e);
     }
 
 }

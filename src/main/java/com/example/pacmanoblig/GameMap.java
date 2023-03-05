@@ -23,7 +23,7 @@ public class GameMap {
 
     private int numRows;
     private int numCols;
-    private final int[][] cells;
+    private static int[][] cells = null;
 
     private Player player;
 
@@ -111,7 +111,7 @@ public class GameMap {
         return root;
     }
 
-    public int[][] getCells(){
+    public static int[][] getCells(){
         return cells;
     }
 
