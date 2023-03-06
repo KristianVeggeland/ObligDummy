@@ -1,10 +1,8 @@
 package com.example.pacmanoblig;
-
+//Imports
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
-
 import GameObjects.Dot;
 import GameObjects.Tablet;
 import GameObjects.Wall;
@@ -13,9 +11,7 @@ import com.example.pacmanoblig.Ghosts.Clyde;
 import com.example.pacmanoblig.Ghosts.Inky;
 import com.example.pacmanoblig.Ghosts.Pinky;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+
 
 public class GameMap {
 

@@ -8,6 +8,10 @@ import javafx.scene.shape.Circle;
 
 public class Player extends Circle {
 
+    double b, targetX, targetY, velocityX, velocityY, x, y;
+    boolean hasNoValue = true;
+    boolean moveDown, moveUp, moveLeft, moveRight, moveNone;
+
     // Enum that controls direction of player object.
     enum Direction{
         UP,
