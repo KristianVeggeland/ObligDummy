@@ -12,6 +12,7 @@ import com.example.pacmanoblig.Ghosts.Clyde;
 import com.example.pacmanoblig.Ghosts.Inky;
 import com.example.pacmanoblig.Ghosts.Pinky;
 import javafx.scene.Group;
+import javafx.scene.layout.BorderPane;
 
 
 public class GameMap {
@@ -23,6 +24,8 @@ public class GameMap {
     private static int[][] cells = null;
 
     private Player player;
+
+
 
     private static GameMap map;
 

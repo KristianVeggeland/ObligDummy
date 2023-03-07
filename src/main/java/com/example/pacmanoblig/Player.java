@@ -20,13 +20,7 @@ import java.util.List;
 public class Player extends Circle {
 
     // Enum that controls direction of player object.
-    enum Direction{
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
-        NONE
-    }
+
 
     // Variable that take all the cells of the map and stores them.
     int[][] cells = GameMap.getCells();
@@ -195,6 +189,7 @@ public class Player extends Circle {
             if (intersects.getBoundsInLocal().getWidth() != -1) {
                 if (n instanceof Dot) {
                     g.getChildren().remove(n);
+                    Score.score++;
                 } else if (n instanceof Tablet) {
                     ghosts.forEach(Ghost::blueMode);
                     g.getChildren().remove(n);

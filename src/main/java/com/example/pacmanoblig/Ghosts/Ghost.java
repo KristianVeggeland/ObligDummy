@@ -1,5 +1,7 @@
 package com.example.pacmanoblig.Ghosts;
 
+import com.example.pacmanoblig.Direction;
+import com.example.pacmanoblig.GameMap;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -18,7 +20,12 @@ public class Ghost extends ImageView {
     private Timer blueTimer;
     private Timer transitionTimer;
 
+    private double velocityX, velocityY;
+    private double speed = 2;
+
     private static List<Ghost> instances = new ArrayList<>();
+
+    protected Direction[] plan;
 
     public Ghost(double x, double y){
         this.x = x;
@@ -26,6 +33,8 @@ public class Ghost extends ImageView {
 
         setLayoutX(x);
         setLayoutY(y);
+
+        int[][] cells = GameMap.getCells();
 
         instances.add(this);
     }
@@ -85,6 +94,32 @@ public class Ghost extends ImageView {
     }
 
 
+    public void update() {
+        movement();
 
+        setLayoutX(getLayoutX() + velocityX);
+        setLayoutY(getLayoutY() - velocityY);
 
+    }
+
+    public void movement() {
+
+        int row = (int) (getLayoutY()/ 32);
+        int col = (int) (getLayoutX()/ 32);
+
+        for (Direction pla : plan) {
+            if (getLayoutX() - 16 == col * 32)
+            if (pla == Direction.RIGHT) {
+                velocityX = speed;
+                velocityY = 0;
+
+            }
+
+        }
+
+    }
+
+    protected void fillPlan(Direction[] l) {
+        this.plan = l;
+    }
 }
