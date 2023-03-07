@@ -1,21 +1,18 @@
 package com.example.pacmanoblig;
-
+//Imports
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 import java.util.Scanner;
-
-import GameObjects.Dot;
-import GameObjects.Tablet;
-import GameObjects.Wall;
+import com.example.pacmanoblig.GameObjects.Dot;
+import com.example.pacmanoblig.GameObjects.PacManArc;
+import com.example.pacmanoblig.GameObjects.Tablet;
+import com.example.pacmanoblig.GameObjects.Wall;
 import com.example.pacmanoblig.Ghosts.Blinky;
 import com.example.pacmanoblig.Ghosts.Clyde;
 import com.example.pacmanoblig.Ghosts.Inky;
 import com.example.pacmanoblig.Ghosts.Pinky;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
+
 
 public class GameMap {
 
@@ -88,7 +85,10 @@ public class GameMap {
                 }
                 if (ch == '0'){
                     player = new Player(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2);
+
                     player.setViewOrder(-1000);
+                    PacManArc arc = new PacManArc();
+                    root.getChildren().add(arc);
                     root.getChildren().add(player);
                 }
                 if (ch == '1'){
