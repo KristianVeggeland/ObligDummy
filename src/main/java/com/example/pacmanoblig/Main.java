@@ -1,5 +1,6 @@
 package com.example.pacmanoblig;
 //Imports
+import com.example.pacmanoblig.Ghosts.Ghost;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -57,6 +58,7 @@ public class Main extends Application {
     private void update(double frameTime) {
         map.getPlayer().update();
         top.getS().checkScore();
+        Ghost.getAllInstances().forEach(Ghost::update);
     }
 
     public static void main(String[] args) {

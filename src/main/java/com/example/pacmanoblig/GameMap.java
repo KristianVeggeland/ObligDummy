@@ -3,10 +3,8 @@ package com.example.pacmanoblig;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import com.example.pacmanoblig.GameObjects.Dot;
-import com.example.pacmanoblig.GameObjects.PacManArc;
-import com.example.pacmanoblig.GameObjects.Tablet;
-import com.example.pacmanoblig.GameObjects.Wall;
+
+import com.example.pacmanoblig.GameObjects.*;
 import com.example.pacmanoblig.Ghosts.Blinky;
 import com.example.pacmanoblig.Ghosts.Clyde;
 import com.example.pacmanoblig.Ghosts.Inky;
@@ -98,18 +96,18 @@ public class GameMap {
                     Blinky blinky = new Blinky(col * CELL_SIZE , row * CELL_SIZE);
                     root.getChildren().add(blinky);
                 }
-                if (ch == '2'){
-                    Inky inky = new Inky(col * CELL_SIZE , row * CELL_SIZE);
-                    root.getChildren().add(inky);
-                }
-                if (ch == '3'){
-                    Pinky pinky = new Pinky(col * CELL_SIZE , row * CELL_SIZE);
-                    root.getChildren().add(pinky);
-                }
-                if (ch == '4'){
-                    Clyde clyde = new Clyde(col * CELL_SIZE , row * CELL_SIZE);
-                    root.getChildren().add(clyde);
-                }
+//                if (ch == '2'){
+//                    Inky inky = new Inky(col * CELL_SIZE , row * CELL_SIZE);
+//                    root.getChildren().add(inky);
+//                }
+//                if (ch == '3'){
+//                    Pinky pinky = new Pinky(col * CELL_SIZE , row * CELL_SIZE);
+//                    root.getChildren().add(pinky);
+//                }
+//                if (ch == '4'){
+//                    Clyde clyde = new Clyde(col * CELL_SIZE , row * CELL_SIZE);
+//                    root.getChildren().add(clyde);
+//                }
             }
         }
         return root;

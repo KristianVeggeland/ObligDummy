@@ -14,7 +14,6 @@ public class Score extends HBox {
     }
 
     public void checkScore() {
-        System.out.println(score);
         scoreTxt.setText(Integer.toString(score));
     }
 
