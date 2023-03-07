@@ -13,8 +13,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Player extends Circle {
 
@@ -31,7 +29,6 @@ public class Player extends Circle {
     int[][] cells = GameMap.getCells();
     Direction pacmanDirection, inputDirection = Direction.NONE;
     boolean startDirection, moveDown, moveUp, moveLeft, moveRight = true;
-
 
     boolean isMoving = false;
 
@@ -58,7 +55,6 @@ public class Player extends Circle {
     public void update() {
         checkCollision();
         checkDirection();
-
 
         setLayoutY(getLayoutY() - vy);
         setLayoutX(getLayoutX() + vx);
@@ -89,7 +85,6 @@ public class Player extends Circle {
         }
     }
 
-
     // Method that checks the players direction and controls adjusts the velocity.
     public void checkDirection() {
 
@@ -108,22 +103,18 @@ public class Player extends Circle {
         moveLeft = cells[row][col-1] != 35;
         moveRight = cells[row][col+1] != 35;
 
-
-
         if (getLayoutX() - getRadius() == col * 32) {
             if (inputDirection == Direction.UP && moveUp) {
                 pacmanDirection = inputDirection;
                 vx = 0;
                 vy = speed;
                 moveCounter = 0;
-
             }
             else if (inputDirection == Direction.DOWN && moveDown) {
                 pacmanDirection = inputDirection;
                 vx = 0;
                 vy = -speed;
                 moveCounter = 0;
-
             }
 
             if (inputDirection == Direction.UP && !moveUp) {
@@ -146,14 +137,12 @@ public class Player extends Circle {
                 vx = speed;
                 vy = 0;
                 moveCounter = 0;
-
             }
             else if (inputDirection == Direction.LEFT && moveLeft) {
                 pacmanDirection = inputDirection;
                 vx = -speed;
                 vy = 0;
                 moveCounter = 0;
-
             }
 
             if (inputDirection == Direction.LEFT && !moveLeft) {
@@ -169,12 +158,7 @@ public class Player extends Circle {
                 }
             }
         }
-
     }
-
-
-
-
 
     private void stopMoving() {
         vx = 0;
@@ -206,7 +190,7 @@ public class Player extends Circle {
                     g.getChildren().remove(n);
                 }
 
-                if (n instanceof Wall nWall) {
+                if (n instanceof Wall) {
                     if (!moveLeft && pacmanDirection == Direction.UP) {
                         stopMoving();
                         setLayoutY(getLayoutY()+1);
@@ -215,7 +199,6 @@ public class Player extends Circle {
                         stopMoving();
                         setLayoutY(getLayoutY()+1);
                     }
-
                     if (!moveLeft && pacmanDirection == Direction.DOWN) {
                         stopMoving();
                         setLayoutY(getLayoutY()-1);
@@ -224,7 +207,6 @@ public class Player extends Circle {
                         stopMoving();
                         setLayoutY(getLayoutY()-1);
                     }
-
                     if (!moveUp && pacmanDirection == Direction.RIGHT) {
                         stopMoving();
                         setLayoutX(getLayoutX()-1);
@@ -233,7 +215,6 @@ public class Player extends Circle {
                         stopMoving();
                         setLayoutX(getLayoutX()-1);
                     }
-
                     if (!moveUp && pacmanDirection == Direction.LEFT) {
                         stopMoving();
                         setLayoutX(getLayoutX()+1);
@@ -242,14 +223,9 @@ public class Player extends Circle {
                         stopMoving();
                         setLayoutX(getLayoutX()+1);
                     }
-
                 }
-
             }
-
-
         }
-
     }
 }
 
