@@ -22,13 +22,17 @@ public class Player extends Circle {
         UP,
         DOWN,
         LEFT,
-        RIGHT
+        RIGHT,
+        NONE
     }
 
     // Variable that take all the cells of the map and stores them.
     int[][] cells = GameMap.getCells();
-    Direction inputDirection;
-    boolean moveDown, moveUp, moveLeft, moveRight = true;
+    Direction pacmanDirection, inputDirection = Direction.NONE;
+    boolean startDirection, moveDown, moveUp, moveLeft, moveRight = true;
+
+
+    boolean isMoving = false;
 
     // Attributes that are used to show pacman location.
     double x,y;
@@ -46,6 +50,7 @@ public class Player extends Circle {
         setLayoutY(y);
         setRadius(16);
         setFill(Color.YELLOW);
+        startDirection = true;
     }
 
     // Method that is keeps track of the player.
@@ -60,23 +65,38 @@ public class Player extends Circle {
     public void handleKeyEvent(KeyEvent e) {
         if (e.getCode() == KeyCode.W) {
             inputDirection = Direction.UP;
+            isMoving = true;
         }
 
-        if (e.getCode() == KeyCode.A) {
+        else if (e.getCode() == KeyCode.A) {
             inputDirection = Direction.LEFT;
+            isMoving = true;
+
         }
 
-        if (e.getCode() == KeyCode.S) {
+        else if (e.getCode() == KeyCode.S) {
             inputDirection = Direction.DOWN;
+            isMoving = true;
+
         }
 
-        if (e.getCode() == KeyCode.D) {
+        else if (e.getCode() == KeyCode.D) {
             inputDirection = Direction.RIGHT;
+            isMoving = true;
+
         }
     }
 
+
     // Method that checks the players direction and controls adjusts the velocity.
     public void checkDirection() {
+
+        if (startDirection) {
+            inputDirection = Direction.LEFT;
+            pacmanDirection = Direction.LEFT;
+            isMoving = true;
+            startDirection = false;
+        }
 
         int row = (int) (getLayoutY()/ 32);
         int col = (int) (getLayoutX()/ 32);
@@ -86,16 +106,22 @@ public class Player extends Circle {
         moveLeft = cells[row][col-1] != 35;
         moveRight = cells[row][col+1] != 35;
 
+
+
         if (getLayoutX() - getRadius() == col * 32) {
             if (inputDirection == Direction.UP && moveUp) {
+                pacmanDirection = inputDirection;
                 vx = 0;
                 vy = speed;
                 moveCounter = 0;
+
             }
-            if (inputDirection == Direction.DOWN && moveDown) {
+            else if (inputDirection == Direction.DOWN && moveDown) {
+                pacmanDirection = inputDirection;
                 vx = 0;
                 vy = -speed;
                 moveCounter = 0;
+
             }
 
             if (inputDirection == Direction.UP && !moveUp) {
@@ -103,27 +129,33 @@ public class Player extends Circle {
                 if (moveCounter == 16/speed) {
                     vx = 0;
                     vy = 0;
+                    isMoving = false;
                 }
             }
-            if (inputDirection == Direction.DOWN && !moveDown) {
+            else if (inputDirection == Direction.DOWN && !moveDown) {
                 moveCounter++;
                 if (moveCounter == (16/speed)+1) {
                     vx = 0;
                     vy = 0;
+                    isMoving = false;
                 }
             }
         }
 
         if (getLayoutY() - getRadius() == row * 32) {
             if (inputDirection == Direction.RIGHT && moveRight) {
+                pacmanDirection = inputDirection;
                 vx = speed;
                 vy = 0;
                 moveCounter = 0;
+
             }
-            if (inputDirection == Direction.LEFT && moveLeft) {
+            else if (inputDirection == Direction.LEFT && moveLeft) {
+                pacmanDirection = inputDirection;
                 vx = -speed;
                 vy = 0;
                 moveCounter = 0;
+
             }
 
             if (inputDirection == Direction.LEFT && !moveLeft) {
@@ -131,16 +163,109 @@ public class Player extends Circle {
                 if (moveCounter == 16/speed) {
                     vx = 0;
                     vy = 0;
+                    isMoving = false;
                 }
             }
-            if (inputDirection == Direction.RIGHT && !moveRight) {
+            else if (inputDirection == Direction.RIGHT && !moveRight) {
                 moveCounter++;
                 if (moveCounter == (16/speed)+1) {
                     vx = 0;
                     vy = 0;
+                    isMoving = false;
                 }
             }
         }
+
+
+        if (pacmanDirection == Direction.LEFT && inputDirection == Direction.UP) {
+            if (!moveLeft) {
+                moveCounter++;
+                if (moveCounter == (16/speed)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
+        if (pacmanDirection == Direction.RIGHT && inputDirection == Direction.UP) {
+            if (!moveRight) {
+                moveCounter++;
+                if (moveCounter == (16/speed+2)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
+        if (pacmanDirection == Direction.LEFT && inputDirection == Direction.DOWN) {
+            if (!moveLeft) {
+                moveCounter++;
+                if (moveCounter == (16/speed+1)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
+        if (pacmanDirection == Direction.RIGHT && inputDirection == Direction.DOWN) {
+            if (!moveRight) {
+                moveCounter++;
+                if (moveCounter == (16/speed+3)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
+
+        if (pacmanDirection == Direction.UP && inputDirection == Direction.RIGHT) {
+            if (!moveUp) {
+                moveCounter++;
+                if (moveCounter == (16/speed+2)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
+        if (pacmanDirection == Direction.DOWN && inputDirection == Direction.RIGHT) {
+            if (!moveDown) {
+                moveCounter++;
+                if (moveCounter == (16/speed+3)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
+        if (pacmanDirection == Direction.UP && inputDirection == Direction.LEFT) {
+            if (!moveUp) {
+                moveCounter++;
+                if (moveCounter == (16/speed+1)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
+        if (pacmanDirection == Direction.DOWN && inputDirection == Direction.LEFT) {
+            if (!moveDown) {
+                moveCounter++;
+                if (moveCounter == (16/speed+2)) {
+                    vx = 0;
+                    vy = 0;
+                    isMoving = false;
+                }
+            }
+        }
+
     }
 
     public void checkCollision() {
@@ -168,9 +293,6 @@ public class Player extends Circle {
                 }
             }
         }
-
-
-
 
     }
 }
