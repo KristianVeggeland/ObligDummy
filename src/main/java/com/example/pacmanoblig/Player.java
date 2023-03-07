@@ -1,13 +1,19 @@
 package com.example.pacmanoblig;
 
 
+import com.example.pacmanoblig.GameObjects.Dot;
+import com.example.pacmanoblig.GameObjects.Tablet;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Player extends Circle {
 
@@ -45,6 +51,7 @@ public class Player extends Circle {
     // Method that is keeps track of the player.
     public void update() {
         checkDirection();
+        checkCollision();
 
         setLayoutY(getLayoutY() - vy);
         setLayoutX(getLayoutX() + vx);
@@ -70,7 +77,6 @@ public class Player extends Circle {
 
     // Method that checks the players direction and controls adjusts the velocity.
     public void checkDirection() {
-        Group g = (Group) this.getParent();
 
         int row = (int) (getLayoutY()/ 32);
         int col = (int) (getLayoutX()/ 32);
@@ -135,6 +141,37 @@ public class Player extends Circle {
                 }
             }
         }
+    }
+
+    public void checkCollision() {
+
+        Group g = (Group) this.getParent();
+        ArrayList<Shape> listOfObjects = new ArrayList<>();
+        Node helper;
+
+        for (int i = 0; i < g.getChildren().size(); i++) {
+            helper = g.getChildren().get(i);
+            if (helper instanceof Dot || helper instanceof Tablet) {
+                listOfObjects.add((Shape) helper);
+            }
+        }
+
+        for (Shape n: listOfObjects) {
+            Shape intersects = Shape.intersect(this, n);
+
+            if (intersects.getBoundsInLocal().getWidth() != -1) {
+                if (n instanceof Dot) {
+                    g.getChildren().remove(n);
+                }
+                if (n instanceof Tablet) {
+                    g.getChildren().remove(n);
+                }
+            }
+        }
+
+
+
+
     }
 }
 
