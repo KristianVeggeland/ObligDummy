@@ -27,9 +27,8 @@ public class Player extends Circle {
 
     // Variable that take all the cells of the map and stores them.
     int[][] cells = GameMap.getCells();
-    Direction pacmanDirection, inputDirection = Direction.NONE;
+    Direction pacmanDirection, inputDirection;
     boolean startDirection, moveDown, moveUp, moveLeft, moveRight = true;
-
     boolean isMoving = false;
 
     // Attributes that are used to show pacman location.
@@ -37,7 +36,7 @@ public class Player extends Circle {
     // Attributes determining the player's velocity.
     private double vx, vy;
     private final double speed = 2;
-    double moveCounter = 0;
+    private double moveCounter = 0;
 
     // Class constructor.
     public Player(double x, double y) {
@@ -64,24 +63,17 @@ public class Player extends Circle {
         if (e.getCode() == KeyCode.W) {
             inputDirection = Direction.UP;
             isMoving = true;
-        }
-
-        else if (e.getCode() == KeyCode.A) {
+        } else if (e.getCode() == KeyCode.A) {
             inputDirection = Direction.LEFT;
             isMoving = true;
 
-        }
-
-        else if (e.getCode() == KeyCode.S) {
+        } else if (e.getCode() == KeyCode.S) {
             inputDirection = Direction.DOWN;
             isMoving = true;
 
-        }
-
-        else if (e.getCode() == KeyCode.D) {
+        } else if (e.getCode() == KeyCode.D) {
             inputDirection = Direction.RIGHT;
             isMoving = true;
-
         }
     }
 
@@ -228,10 +220,3 @@ public class Player extends Circle {
         }
     }
 }
-
-
-
-
-
-
-
