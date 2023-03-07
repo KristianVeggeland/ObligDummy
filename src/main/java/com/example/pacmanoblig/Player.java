@@ -3,6 +3,7 @@ package com.example.pacmanoblig;
 
 import com.example.pacmanoblig.GameObjects.Dot;
 import com.example.pacmanoblig.GameObjects.Tablet;
+import com.example.pacmanoblig.GameObjects.Wall;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -55,8 +56,9 @@ public class Player extends Circle {
 
     // Method that is keeps track of the player.
     public void update() {
-        checkDirection();
         checkCollision();
+        checkDirection();
+
 
         setLayoutY(getLayoutY() - vy);
         setLayoutX(getLayoutX() + vx);
@@ -127,17 +129,13 @@ public class Player extends Circle {
             if (inputDirection == Direction.UP && !moveUp) {
                 moveCounter++;
                 if (moveCounter == 16/speed) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
+                    stopMoving();
                 }
             }
             else if (inputDirection == Direction.DOWN && !moveDown) {
                 moveCounter++;
                 if (moveCounter == (16/speed)+1) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
+                    stopMoving();
                 }
             }
         }
@@ -161,111 +159,27 @@ public class Player extends Circle {
             if (inputDirection == Direction.LEFT && !moveLeft) {
                 moveCounter++;
                 if (moveCounter == 16/speed) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
+                    stopMoving();
                 }
             }
             else if (inputDirection == Direction.RIGHT && !moveRight) {
                 moveCounter++;
                 if (moveCounter == (16/speed)+1) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
+                    stopMoving();
                 }
             }
         }
 
-
-        if (pacmanDirection == Direction.LEFT && inputDirection == Direction.UP) {
-            if (!moveLeft) {
-                moveCounter++;
-                if (moveCounter == (16/speed)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
-
-        if (pacmanDirection == Direction.RIGHT && inputDirection == Direction.UP) {
-            if (!moveRight) {
-                moveCounter++;
-                if (moveCounter == (16/speed+2)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
-
-        if (pacmanDirection == Direction.LEFT && inputDirection == Direction.DOWN) {
-            if (!moveLeft) {
-                moveCounter++;
-                if (moveCounter == (16/speed+1)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
-
-        if (pacmanDirection == Direction.RIGHT && inputDirection == Direction.DOWN) {
-            if (!moveRight) {
-                moveCounter++;
-                if (moveCounter == (16/speed+3)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
+    }
 
 
-        if (pacmanDirection == Direction.UP && inputDirection == Direction.RIGHT) {
-            if (!moveUp) {
-                moveCounter++;
-                if (moveCounter == (16/speed+2)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
 
-        if (pacmanDirection == Direction.DOWN && inputDirection == Direction.RIGHT) {
-            if (!moveDown) {
-                moveCounter++;
-                if (moveCounter == (16/speed+3)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
 
-        if (pacmanDirection == Direction.UP && inputDirection == Direction.LEFT) {
-            if (!moveUp) {
-                moveCounter++;
-                if (moveCounter == (16/speed+1)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
 
-        if (pacmanDirection == Direction.DOWN && inputDirection == Direction.LEFT) {
-            if (!moveDown) {
-                moveCounter++;
-                if (moveCounter == (16/speed+2)) {
-                    vx = 0;
-                    vy = 0;
-                    isMoving = false;
-                }
-            }
-        }
-
+    private void stopMoving() {
+        vx = 0;
+        vy = 0;
+        isMoving = false;
     }
 
     public void checkCollision() {
@@ -276,7 +190,7 @@ public class Player extends Circle {
 
         for (int i = 0; i < g.getChildren().size(); i++) {
             helper = g.getChildren().get(i);
-            if (helper instanceof Dot || helper instanceof Tablet) {
+            if (helper instanceof Dot || helper instanceof Tablet || helper instanceof Wall)  {
                 listOfObjects.add((Shape) helper);
             }
         }
@@ -291,7 +205,49 @@ public class Player extends Circle {
                 if (n instanceof Tablet) {
                     g.getChildren().remove(n);
                 }
+
+                if (n instanceof Wall nWall) {
+                    if (!moveLeft && pacmanDirection == Direction.UP) {
+                        stopMoving();
+                        setLayoutY(getLayoutY()+1);
+                    }
+                    if (!moveRight && pacmanDirection == Direction.UP) {
+                        stopMoving();
+                        setLayoutY(getLayoutY()+1);
+                    }
+
+                    if (!moveLeft && pacmanDirection == Direction.DOWN) {
+                        stopMoving();
+                        setLayoutY(getLayoutY()-1);
+                    }
+                    if (!moveRight && pacmanDirection == Direction.DOWN) {
+                        stopMoving();
+                        setLayoutY(getLayoutY()-1);
+                    }
+
+                    if (!moveUp && pacmanDirection == Direction.RIGHT) {
+                        stopMoving();
+                        setLayoutX(getLayoutX()-1);
+                    }
+                    if (!moveDown && pacmanDirection == Direction.RIGHT) {
+                        stopMoving();
+                        setLayoutX(getLayoutX()-1);
+                    }
+
+                    if (!moveUp && pacmanDirection == Direction.LEFT) {
+                        stopMoving();
+                        setLayoutX(getLayoutX()+1);
+                    }
+                    if (!moveDown && pacmanDirection == Direction.LEFT) {
+                        stopMoving();
+                        setLayoutX(getLayoutX()+1);
+                    }
+
+                }
+
             }
+
+
         }
 
     }
