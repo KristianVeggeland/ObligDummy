@@ -23,21 +23,30 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        int targetFps = 90;
+        long interval = (long) (1e9 / targetFps);
+
         AnimationTimer timer = new AnimationTimer() {
+            long lastTime = 0;
+
             @Override
             public void handle(long now) {
-
                 if (lastTime == 0) {
                     lastTime = now;
                     return;
                 }
-                double frameTime = (now - lastTime) / 1e9;
+
+                long elapsedNanos = now - lastTime;
+                if (elapsedNanos < interval) {
+                    return;
+                }
+                double frameTime = elapsedNanos / 1e9;
                 update(frameTime);
                 lastTime = now;
             }
+
         };
         timer.start();
-
     }
 
     private void update(double frameTime) {
