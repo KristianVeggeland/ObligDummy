@@ -3,6 +3,7 @@ package com.example.pacmanoblig;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -23,7 +24,7 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        int targetFps = 90;
+        int targetFps = 80;
         long interval = (long) (1e9 / targetFps);
 
         AnimationTimer timer = new AnimationTimer() {

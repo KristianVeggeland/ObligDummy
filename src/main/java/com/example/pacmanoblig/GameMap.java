@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import com.example.pacmanoblig.GameObjects.Dot;
+import com.example.pacmanoblig.GameObjects.PacManArc;
 import com.example.pacmanoblig.GameObjects.Tablet;
 import com.example.pacmanoblig.GameObjects.Wall;
 import com.example.pacmanoblig.Ghosts.Blinky;
@@ -83,7 +84,10 @@ public class GameMap {
                 }
                 if (ch == '0'){
                     player = new Player(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2);
+
                     player.setViewOrder(-1000);
+                    PacManArc arc = new PacManArc();
+                    root.getChildren().add(arc);
                     root.getChildren().add(player);
                 }
                 if (ch == '1'){

@@ -2,6 +2,7 @@ package com.example.pacmanoblig;
 
 
 import com.example.pacmanoblig.GameObjects.Dot;
+import com.example.pacmanoblig.GameObjects.PacManArc;
 import com.example.pacmanoblig.GameObjects.Tablet;
 import com.example.pacmanoblig.GameObjects.Wall;
 import javafx.scene.Group;
@@ -37,6 +38,9 @@ public class Player extends Circle {
     private double vx, vy;
     private final double speed = 2;
     private double moveCounter = 0;
+    PacManArc arc;
+
+
 
     // Class constructor.
     public Player(double x, double y) {
@@ -46,12 +50,16 @@ public class Player extends Circle {
         setLayoutX(x);
         setLayoutY(y);
         setRadius(16);
+        setVisible(false);
         setFill(Color.YELLOW);
+
+
         startDirection = true;
     }
 
     // Method that is keeps track of the player.
     public void update() {
+        updateArc();
         checkCollision();
         checkDirection();
 
@@ -98,12 +106,14 @@ public class Player extends Circle {
         if (getLayoutX() - getRadius() == col * 32) {
             if (inputDirection == Direction.UP && moveUp) {
                 pacmanDirection = inputDirection;
+                arc.setStartAngle(-225);
                 vx = 0;
                 vy = speed;
                 moveCounter = 0;
             }
             else if (inputDirection == Direction.DOWN && moveDown) {
                 pacmanDirection = inputDirection;
+                arc.setStartAngle(-45);
                 vx = 0;
                 vy = -speed;
                 moveCounter = 0;
@@ -126,12 +136,16 @@ public class Player extends Circle {
         if (getLayoutY() - getRadius() == row * 32) {
             if (inputDirection == Direction.RIGHT && moveRight) {
                 pacmanDirection = inputDirection;
+                arc.setStartAngle(45);
                 vx = speed;
                 vy = 0;
                 moveCounter = 0;
             }
             else if (inputDirection == Direction.LEFT && moveLeft) {
                 pacmanDirection = inputDirection;
+                if (arc.getStartAngle() != -135){
+                    arc.setStartAngle(-135);
+                }
                 vx = -speed;
                 vy = 0;
                 moveCounter = 0;
@@ -161,6 +175,11 @@ public class Player extends Circle {
     public void checkCollision() {
 
         Group g = (Group) this.getParent();
+
+
+
+
+
         ArrayList<Shape> listOfObjects = new ArrayList<>();
         Node helper;
 
@@ -218,5 +237,13 @@ public class Player extends Circle {
                 }
             }
         }
+    }
+    public void updateArc(){
+        Group g = (Group) this.getParent();
+        arc = PacManArc.getInstance();
+        g.getChildren().remove(arc);
+        arc.setLayoutX(getLayoutX());
+        arc.setLayoutY(getLayoutY());
+        g.getChildren().add(arc);
     }
 }
