@@ -1,4 +1,4 @@
-package GameObjects;
+package com.example.pacmanoblig.GameObjects;
 
 //Imports
 import javafx.scene.paint.Color;
