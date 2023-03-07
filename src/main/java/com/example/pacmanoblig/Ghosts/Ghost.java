@@ -85,5 +85,4 @@ public class Ghost extends ImageView {
     }
 
 
-    // random movement + collision...
 }

@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     GameMap map;
-    long lastTime = 0;
 
     @Override
     public void start(Stage primaryStage) throws Exception {

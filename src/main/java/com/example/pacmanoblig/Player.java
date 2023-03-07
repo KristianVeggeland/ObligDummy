@@ -5,6 +5,7 @@ import com.example.pacmanoblig.GameObjects.Dot;
 import com.example.pacmanoblig.GameObjects.PacManArc;
 import com.example.pacmanoblig.GameObjects.Tablet;
 import com.example.pacmanoblig.GameObjects.Wall;
+import com.example.pacmanoblig.Ghosts.Ghost;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -14,6 +15,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends Circle {
 
@@ -175,10 +177,7 @@ public class Player extends Circle {
     public void checkCollision() {
 
         Group g = (Group) this.getParent();
-
-
-
-
+        List<Ghost> ghosts = Ghost.getAllInstances();
 
         ArrayList<Shape> listOfObjects = new ArrayList<>();
         Node helper;
@@ -196,8 +195,8 @@ public class Player extends Circle {
             if (intersects.getBoundsInLocal().getWidth() != -1) {
                 if (n instanceof Dot) {
                     g.getChildren().remove(n);
-                }
-                if (n instanceof Tablet) {
+                } else if (n instanceof Tablet) {
+                    ghosts.forEach(Ghost::blueMode);
                     g.getChildren().remove(n);
                 }
 
