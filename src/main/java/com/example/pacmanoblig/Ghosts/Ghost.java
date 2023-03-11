@@ -5,13 +5,12 @@ import com.example.pacmanoblig.GameMap;
 import com.example.pacmanoblig.GameObjects.Dot;
 import com.example.pacmanoblig.GameObjects.Tablet;
 import com.example.pacmanoblig.GameObjects.Wall;
-import com.example.pacmanoblig.Score;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 
@@ -20,29 +19,36 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Ghost extends Rectangle {
-
+    private static final int MAX_ITERATIONS = 10;
     double x, y;
     private static boolean inBlueMode;
-    private Image originalImage;
+    private String originalImagePath;
     private Timer blueTimer;
     private Timer transitionTimer;
-    private Timer changeDirectionTimer;
+
+    int index = 0;
+    private boolean hasReachedTargetPosition = true;
+    private Timer changeDirectionTimer = new Timer();
 
     private double velocityX, velocityY;
-    private double speed = 2;
-    int index = 0;
+    private double speed = 1;
 
-    String adresse;
+    int moveCounter =0;
+    int stillCounter = 0;
 
     private static List<Ghost> instances = new ArrayList<>();
     private boolean movingRight, movingLeft, movingUp, movingDown;
     private boolean moveDown, moveUp, moveLeft, moveRight;
     int[][] cells = GameMap.getCells();
-    private double moveCounter = 0;
+
 
     String imagePath;
 
+    boolean isTaskComplete = true;
+    boolean timerStart = true;
+
     protected Direction[] plan;
+    Direction currentDirection;
 
     public Ghost(double x, double y, String imagePath){
         this.x = x;
@@ -54,6 +60,9 @@ public class Ghost extends Rectangle {
         setWidth(32);
         setHeight(32);
 
+        setViewOrder(-999);
+
+
         instances.add(this);
     }
 
@@ -61,11 +70,11 @@ public class Ghost extends Rectangle {
     public void blueMode () {
 
 
-        if (originalImage == null) {
-            originalImage = new Image(this.imagePath);
+        if (originalImagePath == null) {
+            originalImagePath = this.imagePath;
         }
 
-        setImageFromPath("src/images/bluemode.gif");
+        setImageFromPath("src/images/BlueMode.gif");
 
         inBlueMode = true; // legges til for å senere sjekke om pacman kan spise den på collision
 
@@ -81,18 +90,12 @@ public class Ghost extends Rectangle {
         blueTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    FileInputStream invStream = new FileInputStream("src/images/transition.gif");
-                    Image transistion = new Image(invStream);
-                    setFill(new ImagePattern(transistion));
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+                setImageFromPath("src/images/transition.gif");
 
                 transitionTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        setFill(new ImagePattern(originalImage));
+                        setImageFromPath(originalImagePath);
                         inBlueMode = false;
                     }
                 }, 3500);
@@ -129,187 +132,154 @@ public class Ghost extends Rectangle {
     }
 
     public void movement() {
-        int[] controller = new int[plan.length + 1];
-        int filler = 1;
-        for (int i = 0; i < plan.length +1  ; i++) {
-            controller[i] = filler;
-            filler++;
-        }
 
-
-        int row = (int) (getLayoutY()/ 32);
-        int col = (int) (getLayoutX()/ 32);
-
-        moveUp = cells[row-1][col]!= 35;
-        moveDown = cells[row+1][col] != 35;
-        moveLeft = cells[row][col-1] != 35;
-        moveRight = cells[row][col+1] != 35;
-
-
-        changeDirectionTimer = new Timer();
-
-
-
-        if (index == controller.length - 1){
+        if (index >= plan.length-1) {
             index = 0;
         }
 
 
-        if (getLayoutX() == col * 32) {
-            if (plan[index] == Direction.UP && moveUp) {
-                ghostDirection = plan[index];
-                velocityX = 0;
-                velocityY = speed;
-                moveCounter = 0;
-            }
-            else if (plan[index] == Direction.DOWN && moveDown) {
-                ghostDirection = plan[index];
-                velocityX = 0;
-                velocityY = -speed;
-                moveCounter = 0;
-            }
-
-            if (plan[index] == Direction.UP && !moveUp) {
-                System.out.println(1);
-                moveCounter++;
-                if (index < controller.length-1) {
-                    index++;
-                }else if (moveCounter == (16/speed) +1  ) {
-                    stopMoving();
-                }
-                else {
-                    index = 0;
-                }
+        currentDirection = plan[index];
 
 
-            }
-            else if (plan[index] == Direction.DOWN && !moveDown) {
-                System.out.println(2);
-                moveCounter++;
-                if (index < controller.length-1) {
-                    index ++;
-                } else if (moveCounter == (16/speed) +1  ) {
-                    stopMoving();
-                }
-                else {
-                    index = 0;
-                }
+        System.out.println(currentDirection);
+        System.out.println(moveCounter);
+
+        int row = (int) (getLayoutY() / 32);
+        int col = (int) (getLayoutX() / 32);
 
 
-
-            }
-        }
+        moveUp = cells[row-1][col] != 35;
+        moveDown = cells[row+1][col] != 35;
+        moveLeft = cells[row][col-1] != 35;
+        moveRight = cells[row][col+1] != 35;
 
         if (getLayoutY() == row * 32) {
-            if (plan[index] == Direction.RIGHT && moveRight) {
-                ghostDirection = plan[index];
-                velocityX = speed;
-                velocityY = 0;
-                moveCounter = 0;
+            if (currentDirection == Direction.UP && moveUp) {
+                moveCounter++;
+                velocityX = 0;
+                velocityY = -speed;
+            } else if (currentDirection == Direction.DOWN && moveDown) {
+                moveCounter++;
+                velocityX = 0;
+                velocityY = speed;
             }
-            else if (plan[index] == Direction.LEFT && moveLeft) {
-                ghostDirection = plan[index];
+            if (currentDirection == Direction.UP && !moveUp) {
+                stopMoving();
+            } else if (currentDirection == Direction.DOWN && !moveDown) {
+                stopMoving();
+            }
+
+            if (moveCounter >= 2) {
+                if (moveLeft && currentDirection == Direction.DOWN && plan[index+1] == Direction.LEFT) {
+                    stopMoving();
+                    setScaleX(1);
+                    velocityX = -speed;
+                    velocityY = 0;
+                } else if (moveLeft && currentDirection == Direction.UP && plan[index+1] == Direction.LEFT) {
+                    stopMoving();
+                    setScaleX(1);
+                    velocityX = -speed;
+                    velocityY = 0;
+                }else if (moveRight && currentDirection == Direction.DOWN && plan[index+1] == Direction.RIGHT ) {
+                    stopMoving();
+                    setScaleX(-1);
+                    velocityX = speed;
+                    velocityY = 0;
+                } else if (moveRight && currentDirection == Direction.UP && plan[index+1] == Direction.RIGHT ) {
+                    stopMoving();
+                    setScaleX(-1);
+                    velocityX = speed;
+                    velocityY = 0;
+                }
+            }
+
+
+
+        }
+
+        if (getLayoutX() == col * 32) {
+            if (currentDirection == Direction.LEFT && moveLeft) {
+                moveCounter++;
+                setScaleX(1);
                 velocityX = -speed;
                 velocityY = 0;
-                moveCounter = 0;
+            }
+            if (currentDirection == Direction.RIGHT && moveRight) {
+                moveCounter++;
+                setScaleX(-1);
+                velocityX = speed;
+                velocityY = 0;
             }
 
-            if (plan[index] == Direction.LEFT && !moveLeft) {
-                System.out.println(3);
-                moveCounter++;
-                if (index <= plan.length-1) {
-                    index ++;
-                }else if (moveCounter == (16/speed) +1  ) {
-                    stopMoving();
-                }
-                else {
-                    index = 0;
-                }
-
+            if (currentDirection == Direction.LEFT && !moveLeft) {
+                stopMoving();
+            } else if (currentDirection == Direction.RIGHT && !moveRight) {
+                stopMoving();
             }
-            else if (plan[index] == Direction.RIGHT && !moveRight) {
-                System.out.println(4);
-                moveCounter++;
-                if (index <= plan.length-1) {
-                    index ++;
-                } else if (moveCounter == (16/speed) +1  ) {
+
+            if (moveCounter >= 2) {
+                if (moveUp && currentDirection == Direction.RIGHT && plan[index+1] == Direction.UP ) {
                     stopMoving();
-                } else {
-                    index = 0;
+                    setScaleX(-1);
+                    velocityX = 0;
+                    velocityY = -speed;
+                } else if (moveUp && currentDirection == Direction.LEFT && plan[index+1] == Direction.UP) {
+                    stopMoving();
+                    setScaleX(-1);
+                    velocityX = 0;
+                    velocityY = -speed;
+                }  else if (moveDown && currentDirection == Direction.RIGHT && plan[index+1] == Direction.DOWN) {
+                    stopMoving();
+                    setScaleX(-1);
+                    velocityX = 0;
+                    velocityY = speed;
+                }   else if (moveDown && currentDirection == Direction.LEFT && plan[index+1] == Direction.DOWN) {
+                    stopMoving();
+                    setScaleX(-1);
+                    velocityX = 0;
+                    velocityY = speed;
                 }
             }
         }
 
+        if (velocityX == 0 && velocityY == 0) {
+            stillCounter++;
+            if (stillCounter >= 3) {
+                setLayoutX(col*32);
+                setLayoutY(row*32);
+                stillCounter = 0;
+                index++;
+            }
+        } else {
+            stillCounter = 0;
+        }
+
     }
 
-    private void stopMoving(){
+
+    public void fillPlan(Direction[] pl) {
+        this.plan = pl;
+    }
+    
+    public void stopMoving() {
+        moveCounter = 0;
         velocityX = 0;
         velocityY = 0;
-    }
-
-    protected void fillPlan(Direction[] l) {
-        this.plan = l;
-    }
-
-    private void index(){
         index++;
     }
 
+//    public Direction[] randomDirection() {
+//        int amount = 1000;
+//        Direction[] directions = new Direction[amount];
+//        Random random = new Random();
+//        for (int i = 0; i < amount; i++) {
+//            directions[i] = Direction.values()[random.nextInt(Direction.values().length)];
+//
+//
+//        }
+//
+//        return directions;
+//    }
 
-    public void checkCollision() {
-
-        Group g = (Group) this.getParent();
-
-        ArrayList<Shape> listOfObjects = new ArrayList<>();
-        Node helper;
-
-        for (int i = 0; i < g.getChildren().size(); i++) {
-            helper = g.getChildren().get(i);
-            if (helper instanceof Dot || helper instanceof Tablet || helper instanceof Wall)  {
-                listOfObjects.add((Shape) helper);
-            }
-        }
-
-        for (Shape n: listOfObjects) {
-            Shape intersects = Shape.intersect(this, n);
-
-            if (intersects.getBoundsInLocal().getWidth() != -1) {
-
-                if (n instanceof Wall) {
-                    if (!moveLeft && ghostDirection == Direction.UP) {
-                        stopMoving();
-                        setLayoutY(getLayoutY()+1);
-                    }
-                    if (!moveRight && ghostDirection == Direction.UP) {
-                        stopMoving();
-                        setLayoutY(getLayoutY()+1);
-                    }
-                    if (!moveLeft && ghostDirection == Direction.DOWN) {
-                        stopMoving();
-                        setLayoutY(getLayoutY()-1);
-                    }
-                    if (!moveRight && ghostDirection == Direction.DOWN) {
-                        stopMoving();
-                        setLayoutY(getLayoutY()-1);
-                    }
-                    if (!moveUp && ghostDirection == Direction.RIGHT) {
-                        stopMoving();
-                        setLayoutX(getLayoutX()-1);
-                    }
-                    if (!moveDown && ghostDirection == Direction.RIGHT) {
-                        stopMoving();
-                        setLayoutX(getLayoutX()-1);
-                    }
-                    if (!moveUp && ghostDirection == Direction.LEFT) {
-                        stopMoving();
-                        setLayoutX(getLayoutX()+1);
-                    }
-                    if (!moveDown && ghostDirection == Direction.LEFT) {
-                        stopMoving();
-                        setLayoutX(getLayoutX()+1);
-                    }
-                }
-            }
-        }
-    }
 }
+

@@ -9,4 +9,6 @@ module com.example.pacmanoblig {
     opens com.example.pacmanoblig.Ghosts to javafx.fxml;
     exports com.example.pacmanoblig.GameObjects;
     opens com.example.pacmanoblig.GameObjects to javafx.fxml;
+    exports com.example.pacmanoblig.UI;
+    opens com.example.pacmanoblig.UI to javafx.fxml;
 }

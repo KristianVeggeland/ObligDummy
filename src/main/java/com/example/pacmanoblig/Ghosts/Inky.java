@@ -6,8 +6,8 @@ public class Inky extends Ghost{
 
     public Inky(double x, double y) {
         super(x, y, "src/images/inky.gif");
-
-        Direction[] l = {Direction.UP, Direction.RIGHT, Direction.UP, Direction.LEFT, Direction.DOWN, Direction.LEFT, Direction.UP};
+        setImageFromPath(imagePath);
+        Direction[] l = {Direction.RIGHT, Direction.LEFT, Direction.RIGHT, Direction.LEFT, Direction.RIGHT, Direction.LEFT, };
         this.fillPlan(l);
     }
 }

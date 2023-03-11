@@ -6,6 +6,7 @@ import com.example.pacmanoblig.GameObjects.PacManArc;
 import com.example.pacmanoblig.GameObjects.Tablet;
 import com.example.pacmanoblig.GameObjects.Wall;
 import com.example.pacmanoblig.Ghosts.Ghost;
+import com.example.pacmanoblig.UI.Score;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;

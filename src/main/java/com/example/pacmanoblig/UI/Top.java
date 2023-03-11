@@ -1,12 +1,6 @@
-package com.example.pacmanoblig;
+package com.example.pacmanoblig.UI;
 
-import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-
-import static javafx.geometry.VPos.*;
 
 public class Top extends BorderPane {
 
@@ -19,6 +13,7 @@ public class Top extends BorderPane {
     public Top() {
         this.setWidth(300);
         this.setHeight(150);
+        this.setStyle("-fx-font-family: Courier; -fx-font-size: 15pt");
         this.setRight(l);
         this.setLeft(s);
 

@@ -1,10 +1,10 @@
 package com.example.pacmanoblig;
 //Imports
 import com.example.pacmanoblig.Ghosts.Ghost;
+import com.example.pacmanoblig.UI.Top;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
