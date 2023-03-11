@@ -21,14 +21,12 @@ import java.util.*;
 public class Ghost extends Rectangle {
     private static final int MAX_ITERATIONS = 10;
     double x, y;
-    private static boolean inBlueMode;
+    private boolean inBlueMode;
     private String originalImagePath;
     private Timer blueTimer;
     private Timer transitionTimer;
 
     int index = 0;
-    private boolean hasReachedTargetPosition = true;
-    private Timer changeDirectionTimer = new Timer();
 
     private double velocityX, velocityY;
     private double speed = 1;
@@ -36,16 +34,15 @@ public class Ghost extends Rectangle {
     int moveCounter =0;
     int stillCounter = 0;
 
+    public static boolean resetting;
+
     private static List<Ghost> instances = new ArrayList<>();
-    private boolean movingRight, movingLeft, movingUp, movingDown;
     private boolean moveDown, moveUp, moveLeft, moveRight;
     int[][] cells = GameMap.getCells();
 
 
     String imagePath;
 
-    boolean isTaskComplete = true;
-    boolean timerStart = true;
 
     protected Direction[] plan;
     Direction currentDirection;
@@ -85,6 +82,8 @@ public class Ghost extends Rectangle {
             transitionTimer.cancel();
         }
 
+        speed = speed*0.5;
+
         blueTimer = new Timer();
         transitionTimer = new Timer();
         blueTimer.schedule(new TimerTask() {
@@ -96,6 +95,7 @@ public class Ghost extends Rectangle {
                     @Override
                     public void run() {
                         setImageFromPath(originalImagePath);
+                        speed = speed * 2;
                         inBlueMode = false;
                     }
                 }, 3500);
@@ -118,13 +118,31 @@ public class Ghost extends Rectangle {
         return instances;
     }
 
-    public static boolean isBlueMode(){
+    public boolean isBlueMode(){
         return inBlueMode;
     }
 
 
     public void update() {
-        movement();
+
+        if (resetting) {
+            Timer resetTimer = new Timer();
+            stopMoving();
+            currentDirection = null;
+
+            resetTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    currentDirection = plan[index];
+                    resetting = false;
+                }
+            }, 5000);
+        } else {
+            movement();
+        }
+
+
+
 
         setLayoutX(getLayoutX() + velocityX);
         setLayoutY(getLayoutY() - velocityY);
@@ -137,12 +155,6 @@ public class Ghost extends Rectangle {
             index = 0;
         }
 
-
-        currentDirection = plan[index];
-
-
-        System.out.println(currentDirection);
-        System.out.println(moveCounter);
 
         int row = (int) (getLayoutY() / 32);
         int col = (int) (getLayoutX() / 32);

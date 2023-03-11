@@ -2,6 +2,7 @@ package com.example.pacmanoblig;
 //Imports
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.example.pacmanoblig.GameObjects.*;
@@ -10,10 +11,12 @@ import com.example.pacmanoblig.Ghosts.Clyde;
 import com.example.pacmanoblig.Ghosts.Inky;
 import com.example.pacmanoblig.Ghosts.Pinky;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.shape.Shape;
 
 
-public class GameMap {
+public class GameMap extends Group {
 
     private static final int CELL_SIZE = 32;
 
@@ -67,50 +70,49 @@ public class GameMap {
 
 
     public Group createMap() {
-        Group root = new Group();
 
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {
                 int ch = cells[row][col];
                 if (ch == '#') {
                     Wall wall = new Wall(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                    root.getChildren().add(wall);
+                    this.getChildren().add(wall);
                 }
                 if (ch == '-') {
                     Dot dot = new Dot(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2);
-                    root.getChildren().add(dot);
+                    this.getChildren().add(dot);
                 }
                 if (ch == '=') {
                     Tablet energy = new Tablet(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2);
-                    root.getChildren().add(energy);
+                    this.getChildren().add(energy);
                 }
                 if (ch == '0'){
                     player = new Player(col * CELL_SIZE + CELL_SIZE / 2, row * CELL_SIZE + CELL_SIZE / 2);
 
                     player.setViewOrder(-1000);
                     PacManArc arc = new PacManArc();
-                    root.getChildren().add(arc);
-                    root.getChildren().add(player);
+                    this.getChildren().add(arc);
+                    this.getChildren().add(player);
                 }
                 if (ch == '1'){
                     Blinky blinky = new Blinky(col * CELL_SIZE , row * CELL_SIZE);
-                    root.getChildren().add(blinky);
+                    this.getChildren().add(blinky);
                 }
                 if (ch == '2'){
                     Inky inky = new Inky(col * CELL_SIZE , row * CELL_SIZE);
-                    root.getChildren().add(inky);
+                    this.getChildren().add(inky);
                 }
                 if (ch == '3'){
                     Pinky pinky = new Pinky(col * CELL_SIZE , row * CELL_SIZE);
-                    root.getChildren().add(pinky);
+                    this.getChildren().add(pinky);
                 }
                 if (ch == '4'){
                     Clyde clyde = new Clyde(col * CELL_SIZE , row * CELL_SIZE);
-                    root.getChildren().add(clyde);
+                    this.getChildren().add(clyde);
                 }
             }
         }
-        return root;
+        return this;
     }
 
     public static int[][] getCells(){
@@ -125,5 +127,40 @@ public class GameMap {
         return map;
     }
 
+    public void resetMap() {
 
+        ArrayList<Shape> listOfObjects = new ArrayList<>();
+        Node helper;
+
+        for (int i = 0; i < this.getChildren().size(); i++) {
+            helper = this.getChildren().get(i);
+            if (helper instanceof Player || helper instanceof Blinky || helper instanceof Clyde || helper instanceof Pinky || helper instanceof Inky) {
+                listOfObjects.add((Shape) helper);
+            }
+        }
+
+        for (Shape n : listOfObjects) {
+            if (n instanceof Player) {
+                n.setLayoutX(9 * CELL_SIZE + CELL_SIZE / 2);
+                n.setLayoutY(15 * CELL_SIZE + CELL_SIZE / 2);
+            }
+            if (n instanceof Blinky) {
+                n.setLayoutX(9 * CELL_SIZE);
+                n.setLayoutY(7 * CELL_SIZE);
+            }
+            if (n instanceof Inky) {
+                n.setLayoutX(8 * CELL_SIZE);
+                n.setLayoutY(9 * CELL_SIZE);
+            }
+            if (n instanceof Pinky) {
+                n.setLayoutX(9 * CELL_SIZE);
+                n.setLayoutY(9 * CELL_SIZE);
+            }
+            if (n instanceof Clyde) {
+                n.setLayoutX(10 * CELL_SIZE);
+                n.setLayoutY(9 * CELL_SIZE);
+            }
+        }
+    }
 }
+

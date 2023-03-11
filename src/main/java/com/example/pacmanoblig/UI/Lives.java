@@ -5,7 +5,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 
 public class Lives extends HBox {
-    static int lives = 3;
+    public static int lives = 3;
 
     Label livesLabel = new Label("Lives: ");
     Label livesTxt = new Label(Integer.toString(lives));
@@ -19,7 +19,7 @@ public class Lives extends HBox {
     }
 
     public void checkLivesLeft() {
-
+        livesTxt.setText(Integer.toString(lives));
     }
 
 }

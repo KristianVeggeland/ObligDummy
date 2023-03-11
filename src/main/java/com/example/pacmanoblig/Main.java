@@ -1,6 +1,7 @@
 package com.example.pacmanoblig;
 //Imports
 import com.example.pacmanoblig.Ghosts.Ghost;
+import com.example.pacmanoblig.UI.Lives;
 import com.example.pacmanoblig.UI.Top;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -47,6 +48,9 @@ public class Main extends Application {
                     return;
                 }
                 double frameTime = elapsedNanos / 1e9;
+                if (Lives.lives == 0) {
+                    Platform.exit();
+                }
                 update(frameTime);
                 lastTime = now;
             }
@@ -58,6 +62,7 @@ public class Main extends Application {
     private void update(double frameTime) {
         map.getPlayer().update();
         top.getS().checkScore();
+        top.getL().checkLivesLeft();
         Ghost.getAllInstances().forEach(Ghost::update);
     }
 

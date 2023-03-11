@@ -6,6 +6,7 @@ import com.example.pacmanoblig.GameObjects.PacManArc;
 import com.example.pacmanoblig.GameObjects.Tablet;
 import com.example.pacmanoblig.GameObjects.Wall;
 import com.example.pacmanoblig.Ghosts.Ghost;
+import com.example.pacmanoblig.UI.Lives;
 import com.example.pacmanoblig.UI.Score;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -17,6 +18,10 @@ import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static com.example.pacmanoblig.UI.Score.score;
 
 public class Player extends Circle {
 
@@ -35,6 +40,8 @@ public class Player extends Circle {
     private double vx, vy;
     private final double speed = 2;
     private double moveCounter = 0;
+    private boolean resetting;
+
     PacManArc arc;
 
 
@@ -56,12 +63,28 @@ public class Player extends Circle {
 
     // Method that is keeps track of the player.
     public void update() {
+
+        if (resetting) {
+            Timer resetTimer = new Timer();
+            stopMoving();
+            inputDirection = null;
+            resetTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    startDirection = true;
+                    resetting = false;
+                }
+            }, 5000);
+        }
+
         updateArc();
         checkCollision();
         checkDirection();
 
         setLayoutY(getLayoutY() - vy);
         setLayoutX(getLayoutX() + vx);
+
+
     }
 
     public void handleKeyEvent(KeyEvent e) {
@@ -184,13 +207,28 @@ public class Player extends Circle {
             }
         }
 
+        for (Ghost ghost : ghosts) {
+            Shape intersects = Shape.intersect(this, ghost);
+
+            if (intersects.getBoundsInLocal().getWidth() != -1) {
+                if (ghost.isBlueMode()) {
+                    g.getChildren().remove(ghost);
+                } else {
+                    Lives.lives--;
+                    ((GameMap) this.getParent()).resetMap();
+                    resetting = true;
+                    Ghost.resetting = true;
+                }
+            }
+        }
+
         for (Shape n: listOfObjects) {
             Shape intersects = Shape.intersect(this, n);
 
             if (intersects.getBoundsInLocal().getWidth() != -1) {
                 if (n instanceof Dot) {
                     g.getChildren().remove(n);
-                    Score.score++;
+                    score++;
                 } else if (n instanceof Tablet) {
                     ghosts.forEach(Ghost::blueMode);
                     g.getChildren().remove(n);
@@ -241,4 +279,5 @@ public class Player extends Circle {
         arc.setLayoutY(getLayoutY());
         g.getChildren().add(arc);
     }
+
 }
