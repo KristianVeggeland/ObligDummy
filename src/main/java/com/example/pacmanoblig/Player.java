@@ -12,6 +12,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
@@ -25,24 +26,17 @@ import static com.example.pacmanoblig.UI.Score.score;
 
 public class Player extends Circle {
 
-    // Enum that controls direction of player object.
-
-
-    // Variable that take all the cells of the map and stores them.
+    // Int array that gets a reference to the cells instance in GameMap
     int[][] cells = GameMap.getCells();
     Direction pacmanDirection, inputDirection;
-    boolean startDirection, moveDown, moveUp, moveLeft, moveRight = true;
+    private boolean startDirection, moveDown, moveUp, moveLeft, moveRight = true;
     boolean isMoving = false;
-
-    // Attributes that are used to show pacman location.
     double x,y;
-    // Attributes determining the player's velocity.
-    private double vx, vy;
+    private double velocityX, velocityY;
     private final double speed = 2;
     private double moveCounter = 0;
     private boolean resetting;
-
-    PacManArc arc;
+    private PacManArc arc;
 
 
 
@@ -57,17 +51,20 @@ public class Player extends Circle {
         setVisible(false);
         setFill(Color.YELLOW);
 
-
         startDirection = true;
     }
 
     // Method that is keeps track of the player.
     public void update() {
 
+        // 5 seconds timer after every death
         if (resetting) {
             Timer resetTimer = new Timer();
-            stopMoving();
             inputDirection = null;
+            arc.setStartAngle(-135);
+            stopMoving();
+            setLayoutX(9*32 + 32 / 2);
+            setLayoutY(15*32 + 32 / 2);
             resetTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -81,10 +78,9 @@ public class Player extends Circle {
         checkCollision();
         checkDirection();
 
-        setLayoutY(getLayoutY() - vy);
-        setLayoutX(getLayoutX() + vx);
-
-
+        // Sets the position after velocity has been modified
+        setLayoutY(getLayoutY() - velocityY);
+        setLayoutX(getLayoutX() + velocityX);
     }
 
     public void handleKeyEvent(KeyEvent e) {
@@ -115,27 +111,50 @@ public class Player extends Circle {
             startDirection = false;
         }
 
+        // Gets the current row and col of the player
         int row = (int) (getLayoutY()/ 32);
         int col = (int) (getLayoutX()/ 32);
 
+
+        // Checks if the player is on an edge cell
+        if (col <= 0) {
+            if (col == -1 && pacmanDirection == Direction.LEFT) {
+                velocityX = -speed;
+                // Teleports the player to the opposite side
+                setLayoutX(18*32);
+            }
+            return;
+        }
+
+        if (col >= 18) {
+            if (col == 19 && pacmanDirection == Direction.RIGHT) {
+                velocityX = speed;
+                setLayoutX(0);
+            }
+            return;
+        }
+
+        // Checks in each direction if there is a wall
         moveUp = cells[row-1][col]!= 35;
         moveDown = cells[row+1][col] != 35;
         moveLeft = cells[row][col-1] != 35;
         moveRight = cells[row][col+1] != 35;
 
+        // Only accepts movement if the player is in the center of the grid
         if (getLayoutX() - getRadius() == col * 32) {
             if (inputDirection == Direction.UP && moveUp) {
+                // Applies the movement to the actual direction of the player
                 pacmanDirection = inputDirection;
                 arc.setStartAngle(-225);
-                vx = 0;
-                vy = speed;
+                velocityX = 0;
+                velocityY = speed;
                 moveCounter = 0;
             }
             else if (inputDirection == Direction.DOWN && moveDown) {
                 pacmanDirection = inputDirection;
                 arc.setStartAngle(-45);
-                vx = 0;
-                vy = -speed;
+                velocityX = 0;
+                velocityY = -speed;
                 moveCounter = 0;
             }
 
@@ -157,8 +176,8 @@ public class Player extends Circle {
             if (inputDirection == Direction.RIGHT && moveRight) {
                 pacmanDirection = inputDirection;
                 arc.setStartAngle(45);
-                vx = speed;
-                vy = 0;
+                velocityX = speed;
+                velocityY = 0;
                 moveCounter = 0;
             }
             else if (inputDirection == Direction.LEFT && moveLeft) {
@@ -166,8 +185,8 @@ public class Player extends Circle {
                 if (arc.getStartAngle() != -135){
                     arc.setStartAngle(-135);
                 }
-                vx = -speed;
-                vy = 0;
+                velocityX = -speed;
+                velocityY = 0;
                 moveCounter = 0;
             }
 
@@ -186,15 +205,17 @@ public class Player extends Circle {
         }
     }
 
+    // Stops movement
     private void stopMoving() {
-        vx = 0;
-        vy = 0;
+        velocityX = 0;
+        velocityY = 0;
         isMoving = false;
     }
 
+    // Checks for overlapping objects
     public void checkCollision() {
 
-        Group g = (Group) this.getParent();
+        Pane g = (Pane) this.getParent();
         List<Ghost> ghosts = Ghost.getAllInstances();
 
         ArrayList<Shape> listOfObjects = new ArrayList<>();
@@ -210,9 +231,11 @@ public class Player extends Circle {
         for (Ghost ghost : ghosts) {
             Shape intersects = Shape.intersect(this, ghost);
 
+            // Checks if any ghosts are overlapping
             if (intersects.getBoundsInLocal().getWidth() != -1) {
                 if (ghost.isBlueMode()) {
-                    g.getChildren().remove(ghost);
+                    ghost.respawn();
+                    score=score+200;
                 } else {
                     Lives.lives--;
                     ((GameMap) this.getParent()).resetMap();
@@ -221,19 +244,18 @@ public class Player extends Circle {
                 }
             }
         }
-
         for (Shape n: listOfObjects) {
             Shape intersects = Shape.intersect(this, n);
-
+            // Checks if any GameObjects are overlapping
             if (intersects.getBoundsInLocal().getWidth() != -1) {
                 if (n instanceof Dot) {
                     g.getChildren().remove(n);
-                    score++;
+                    score=score+10;
                 } else if (n instanceof Tablet) {
                     ghosts.forEach(Ghost::blueMode);
                     g.getChildren().remove(n);
                 }
-
+                // Wall collision (used for edge cases where our grid collision check does not work)
                 if (n instanceof Wall) {
                     if (!moveLeft && pacmanDirection == Direction.UP) {
                         stopMoving();
@@ -271,13 +293,16 @@ public class Player extends Circle {
             }
         }
     }
+
+    // Updates the overlaying arc to be the same position as player
     public void updateArc(){
-        Group g = (Group) this.getParent();
+        Pane g = (Pane) this.getParent();
         arc = PacManArc.getInstance();
         g.getChildren().remove(arc);
         arc.setLayoutX(getLayoutX());
         arc.setLayoutY(getLayoutY());
         g.getChildren().add(arc);
     }
+
 
 }

@@ -1,23 +1,26 @@
 package com.example.pacmanoblig;
-//Imports
+
+//Imports.
+import com.example.pacmanoblig.GameObjects.Dot;
+import com.example.pacmanoblig.GameObjects.PacManArc;
+import com.example.pacmanoblig.GameObjects.Tablet;
+import com.example.pacmanoblig.GameObjects.Wall;
+import com.example.pacmanoblig.Ghosts.Blinky;
+import com.example.pacmanoblig.Ghosts.Clyde;
+import com.example.pacmanoblig.Ghosts.Inky;
+import com.example.pacmanoblig.Ghosts.Pinky;
+import javafx.scene.Node;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Shape;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.example.pacmanoblig.GameObjects.*;
-import com.example.pacmanoblig.Ghosts.Blinky;
-import com.example.pacmanoblig.Ghosts.Clyde;
-import com.example.pacmanoblig.Ghosts.Inky;
-import com.example.pacmanoblig.Ghosts.Pinky;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Shape;
+// CLass that handles the game map and the things inside it.
+public class GameMap extends Pane {
 
-
-public class GameMap extends Group {
-
+    // Class variables:
     private static final int CELL_SIZE = 32;
 
     private int numRows;
@@ -40,7 +43,9 @@ public class GameMap extends Group {
 
     public GameMap() throws FileNotFoundException {
         map = this;
+        this.setPrefSize(600, 700);
 
+        // Gets the layout of the map out a txt file.
         File file = new File("src/pacman-map.txt");
         Scanner scanner = new Scanner(file);
         numRows = 0;
@@ -68,8 +73,8 @@ public class GameMap extends Group {
 
     }
 
-
-    public Group createMap() {
+    // Method that creates the map.
+    public Pane createMap() {
 
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {

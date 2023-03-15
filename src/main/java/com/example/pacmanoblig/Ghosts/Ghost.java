@@ -19,30 +19,22 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Ghost extends Rectangle {
-    private static final int MAX_ITERATIONS = 10;
     double x, y;
     private boolean inBlueMode;
     private String originalImagePath;
-    private Timer blueTimer;
-    private Timer transitionTimer;
-
+    private Timer blueTimer, transitionTimer, respawnTimer;
     int index = 0;
-
     private double velocityX, velocityY;
     private double speed = 1;
-
-    int moveCounter =0;
-    int stillCounter = 0;
-
-    public static boolean resetting;
-
+    private int moveCounter = 0;
+    private int stillCounter = 0;
+    private boolean respawning;
+    public static boolean resetting = false;
     private static List<Ghost> instances = new ArrayList<>();
     private boolean moveDown, moveUp, moveLeft, moveRight;
     int[][] cells = GameMap.getCells();
 
-
     String imagePath;
-
 
     protected Direction[] plan;
     Direction currentDirection;
@@ -56,25 +48,24 @@ public class Ghost extends Rectangle {
         setLayoutY(y);
         setWidth(32);
         setHeight(32);
-
         setViewOrder(-999);
-
 
         instances.add(this);
     }
 
 
     public void blueMode () {
-
-
+        // Saves the original image path of the ghost instance
         if (originalImagePath == null) {
             originalImagePath = this.imagePath;
         }
 
+        // Sets ghost image to blue mode
         setImageFromPath("src/images/BlueMode.gif");
 
-        inBlueMode = true; // legges til for å senere sjekke om pacman kan spise den på collision
+        inBlueMode = true;
 
+        // Checks if timers are already active
         if (blueTimer != null) {
             blueTimer.cancel();
         }
@@ -82,10 +73,13 @@ public class Ghost extends Rectangle {
             transitionTimer.cancel();
         }
 
+        // Lowers speed while in blue mode
         speed = speed*0.5;
 
         blueTimer = new Timer();
         transitionTimer = new Timer();
+
+        // Two timers so we can have a transition phase
         blueTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -94,6 +88,7 @@ public class Ghost extends Rectangle {
                 transitionTimer.schedule(new TimerTask() {
                     @Override
                     public void run() {
+                        // Returns ghost to its normal state
                         setImageFromPath(originalImagePath);
                         speed = speed * 2;
                         inBlueMode = false;
@@ -103,6 +98,7 @@ public class Ghost extends Rectangle {
         }, 5000);
     }
 
+    // Method to set the current image of the ghost from an image path
     public void setImageFromPath(String imagePath){
         try {
             FileInputStream invStream = new FileInputStream(imagePath);
@@ -113,7 +109,7 @@ public class Ghost extends Rectangle {
         }
     }
 
-
+    // Gets all instances of ghosts
     public static List<Ghost> getAllInstances(){
         return instances;
     }
@@ -124,7 +120,12 @@ public class Ghost extends Rectangle {
 
 
     public void update() {
+        // Checks if the ghost is currently respawning
+        if (respawning){
+            return;
+        }
 
+        // 5 seconds timer standing still after player dies
         if (resetting) {
             Timer resetTimer = new Timer();
             stopMoving();
@@ -138,35 +139,52 @@ public class Ghost extends Rectangle {
                 }
             }, 5000);
         } else {
-            movement();
+            currentDirection = plan[index];
         }
 
-
-
+        movement();
 
         setLayoutX(getLayoutX() + velocityX);
-        setLayoutY(getLayoutY() - velocityY);
-
+        setLayoutY(getLayoutY() + velocityY);
     }
 
     public void movement() {
 
-        if (index >= plan.length-1) {
+        // Makes it so index cant be out of bounds
+        if (index >= plan.length-2) {
             index = 0;
         }
 
-
+        // Current position of the ghost's row and col
         int row = (int) (getLayoutY() / 32);
         int col = (int) (getLayoutX() / 32);
 
+        // Edge cell checker
+        if (col <= 0) {
+            if (col == -1 && currentDirection == Direction.LEFT) {
+                velocityX = -speed;
+                setLayoutX(18*32);
+            }
+            return;
+        }
+        if (col >= 18) {
+            if (col == 19 && currentDirection == Direction.RIGHT) {
+                velocityX = speed;
+                setLayoutX(0);
+            }
+            return;
+        }
 
+        // Checks in each direction if there is a wall
         moveUp = cells[row-1][col] != 35;
         moveDown = cells[row+1][col] != 35;
         moveLeft = cells[row][col-1] != 35;
         moveRight = cells[row][col+1] != 35;
 
+        // Only accepts movement if the ghost is in the center of the grid
         if (getLayoutY() == row * 32) {
             if (currentDirection == Direction.UP && moveUp) {
+                // moveCounter makes sure it does not immediately switch direction once index is increased
                 moveCounter++;
                 velocityX = 0;
                 velocityY = -speed;
@@ -204,9 +222,6 @@ public class Ghost extends Rectangle {
                     velocityY = 0;
                 }
             }
-
-
-
         }
 
         if (getLayoutX() == col * 32) {
@@ -254,6 +269,8 @@ public class Ghost extends Rectangle {
             }
         }
 
+
+        // If ghost is standing still for some reason it will start moving again
         if (velocityX == 0 && velocityY == 0) {
             stillCounter++;
             if (stillCounter >= 3) {
@@ -268,11 +285,12 @@ public class Ghost extends Rectangle {
 
     }
 
-
+    // Fills direction array pl from the subclasses
     public void fillPlan(Direction[] pl) {
         this.plan = pl;
     }
-    
+
+    // Stops movement
     public void stopMoving() {
         moveCounter = 0;
         velocityX = 0;
@@ -280,18 +298,22 @@ public class Ghost extends Rectangle {
         index++;
     }
 
-//    public Direction[] randomDirection() {
-//        int amount = 1000;
-//        Direction[] directions = new Direction[amount];
-//        Random random = new Random();
-//        for (int i = 0; i < amount; i++) {
-//            directions[i] = Direction.values()[random.nextInt(Direction.values().length)];
-//
-//
-//        }
-//
-//        return directions;
-//    }
-
+    // Used to respawn ghost
+    public void respawn() {
+        respawnTimer = new Timer();
+        this.setVisible(false);
+        setLayoutX(9 * 32);
+        setLayoutY(9 * 32);
+        stopMoving();
+        currentDirection = null;
+        respawning = true;
+        respawnTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                respawning = false;
+                setVisible(true);
+            }
+        }, 10000);
+    }
 }
 

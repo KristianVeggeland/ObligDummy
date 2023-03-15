@@ -5,9 +5,14 @@ import com.example.pacmanoblig.UI.Lives;
 import com.example.pacmanoblig.UI.Top;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -20,8 +25,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         borderPane = new BorderPane();
+        borderPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
         map = GameMap.getMap();
         borderPane.setTop(top);
+        primaryStage.setResizable(false);
         borderPane.setCenter(map.createMap());
         Scene scene = new Scene(borderPane, Color.BLACK);
         scene.setOnKeyPressed(this::actionEvents);
